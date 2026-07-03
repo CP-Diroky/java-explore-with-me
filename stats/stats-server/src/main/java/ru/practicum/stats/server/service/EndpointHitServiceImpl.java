@@ -1,6 +1,7 @@
 package ru.practicum.stats.server.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.stats.dto.ViewStatsDto;
 import ru.practicum.stats.server.model.EndpointHit;
 import ru.practicum.stats.server.repository.EndpointHitRepository;
@@ -18,7 +19,7 @@ public class EndpointHitServiceImpl implements EndpointHitService {
         this.endpointHitRepository = endpointHitRepository;
     }
 
-
+    @Transactional
     @Override
     public void addHit(EndpointHit endpointHit) {
         endpointHitRepository.save(endpointHit);

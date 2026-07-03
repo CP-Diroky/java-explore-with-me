@@ -3,7 +3,6 @@ package ru.practicum.stats.server.controller;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.stats.dto.EndpointHitDto;
 import ru.practicum.stats.dto.ViewStatsDto;
@@ -14,7 +13,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@Validated
 public class EndpointHitController {
 
     private final EndpointHitService endpointHitService;
