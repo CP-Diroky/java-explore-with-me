@@ -1,5 +1,7 @@
 package ru.practicum.exceptions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,8 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler
     public ResponseEntity<ApiError> handleMethodNotValidArgument(MethodArgumentNotValidException ex) {
         FieldError error = ex.getFieldError();
@@ -24,6 +28,7 @@ public class GlobalExceptionHandler {
                 error.getRejectedValue());
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, "Incorrectly made request.",
                 message, LocalDateTime.now());
+        log.error(ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
@@ -31,6 +36,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleMismatchArgument(MethodArgumentTypeMismatchException ex) {
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, "Incorrectly made request.",
                 ex.getMessage(), LocalDateTime.now());
+        log.error(ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
@@ -38,6 +44,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleUnreadableMessage(HttpMessageNotReadableException ex) {
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, "Incorrectly made request.",
                 ex.getMessage(), LocalDateTime.now());
+        log.error(ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
@@ -47,8 +54,8 @@ public class GlobalExceptionHandler {
                 HttpStatus.CONFLICT,
                 "Integrity constraint has been violated.",
                 ex.getMessage(),
-                LocalDateTime.now()
-        );
+                LocalDateTime.now());
+        log.error(ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
@@ -59,6 +66,7 @@ public class GlobalExceptionHandler {
                 "The required object was not found.",
                 ex.getMessage(),
                 LocalDateTime.now());
+        log.error(ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
 
@@ -68,8 +76,8 @@ public class GlobalExceptionHandler {
                 HttpStatus.CONFLICT,
                 "For the requested operation the conditions are not met.",
                 ex.getMessage(),
-                LocalDateTime.now()
-        );
+                LocalDateTime.now());
+        log.error(ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
     }
 
@@ -79,8 +87,8 @@ public class GlobalExceptionHandler {
                 HttpStatus.FORBIDDEN,
                 "For the requested operation the conditions are not met.",
                 ex.getMessage(),
-                LocalDateTime.now()
-        );
+                LocalDateTime.now());
+        log.error(ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
     }
 
@@ -88,6 +96,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleBadRequest(BadRequestException ex) {
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, "Incorrectly made request.",
                 ex.getMessage(), LocalDateTime.now());
+        log.error(ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
