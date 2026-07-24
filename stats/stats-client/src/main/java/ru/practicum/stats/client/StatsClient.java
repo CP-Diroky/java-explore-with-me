@@ -2,11 +2,11 @@ package ru.practicum.stats.client;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import ru.practicum.stats.dto.EndpointHitDto;
 import ru.practicum.stats.dto.ViewStatsDto;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -14,40 +14,41 @@ import java.util.List;
 
 public class StatsClient {
     private static final RestTemplate restTemplate = new RestTemplate();
-    private static final String URL = "http://localhost:9090";
+    private final String url;
 
-
-    public static void addHit(EndpointHitDto endpointHitDto) {
-        restTemplate.postForObject(URL + "/hit", endpointHitDto, Void.class);
+    public StatsClient(String url) {
+        this.url = url;
     }
 
-    public static List<ViewStatsDto> viewStats(LocalDateTime start, LocalDateTime end,
-                                               List<String> uris, boolean unique) {
-        String ampersand = "&";
+    public void addHit(EndpointHitDto endpointHitDto) {
+        restTemplate.postForObject(url + "/hit", endpointHitDto, Void.class);
+    }
 
-        StringBuilder query = new StringBuilder("/stats?");
+    public List<ViewStatsDto> viewStats(LocalDateTime start, LocalDateTime end, List<String> uris,
+            boolean unique) {
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-        String queryStart = URLEncoder.encode(start.format(formatter), StandardCharsets.UTF_8);
-        query.append("start=").append(queryStart);
-
-        String queryEnd = URLEncoder.encode(end.format(formatter), StandardCharsets.UTF_8);
-        query.append(ampersand).append("end=").append(queryEnd);
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(url)
+                .path("/stats")
+                .queryParam("start", start.format(formatter))
+                .queryParam("end", end.format(formatter))
+                .queryParam("unique", unique);
 
         if (uris != null) {
-            for (String uri: uris) {
-                query.append(ampersand).append("uris=").append(uri);
+            for (String uri : uris) {
+                builder.queryParam("uris", uri);
             }
         }
 
-        query.append(ampersand).append("unique=").append(unique);
+        URI uri = builder.build().encode().toUri();
 
-        ResponseEntity<ViewStatsDto[]> response = restTemplate.getForEntity(URL + query, ViewStatsDto[].class);
+        ResponseEntity<ViewStatsDto[]> response =
+                restTemplate.getForEntity(uri, ViewStatsDto[].class);
 
         ViewStatsDto[] body = response.getBody();
         return body == null ? List.of() : Arrays.asList(body);
-
     }
 
 
