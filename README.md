@@ -1,3 +1,6 @@
+## Pull Request: 
+https://github.com/CP-Diroky/java-explore-with-me/pull/4
+
 ## Project Structure
 
 Проект состоит из двух основных сервисов:
